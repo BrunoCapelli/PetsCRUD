@@ -1,0 +1,8 @@
+﻿################################################################################
+# Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
+################################################################################
+
+/PetApp-Backend/.vs/PetsBackend/FileContentIndex
+/PetApp-Backend/WebApplication1/obj
+/PetApp-Backend/WebApplication1/Properties
+*.json
