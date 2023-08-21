@@ -6,3 +6,10 @@
 /PetApp-Backend/WebApplication1/obj
 /PetApp-Backend/WebApplication1/Properties
 *.json
+/PetApp-Backend/WebApplication1/bin/Debug/net7.0
+/PetApp-Backend/.vs/PetsBackend/DesignTimeBuild
+/PetApp-Backend/.vs/PetsBackend/v17
+/PetApp-Backend/.vs/ProjectEvaluation
+/.gitignore
+/.gitignore
+/.gitignore

@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Models;
+
 namespace WebApplication1
 {
     public class Program
@@ -7,6 +10,19 @@ namespace WebApplication1
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "policyName",
+                                  builder =>
+                                  {
+                                      builder
+                                        .AllowAnyOrigin()
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader();
+                                  });
+            });
+
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -14,14 +30,21 @@ namespace WebApplication1
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
 
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Connection"));
+            });
+
+            var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("policyName");
 
             app.UseHttpsRedirection();
 
