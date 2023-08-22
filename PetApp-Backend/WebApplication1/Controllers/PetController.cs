@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
+using WebApplication1.Models.DTO;
 
 namespace WebApplication1.Controllers
 {
@@ -10,9 +12,11 @@ namespace WebApplication1.Controllers
     public class PetController : ControllerBase
     {
         private ApplicationDbContext _context;
-        public PetController(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public PetController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -22,7 +26,9 @@ namespace WebApplication1.Controllers
             try
             {
                 var listPets = await _context.Pets.ToListAsync();
-                return Ok(listPets);
+                var listPetsDTO = _mapper.Map<IEnumerable<PetDTO>>(listPets);
+
+                return Ok(listPetsDTO);
 
             } catch (Exception ex)
             {
@@ -41,8 +47,9 @@ namespace WebApplication1.Controllers
                 {
                     return NotFound();
                 }
-                return Ok(pet);
 
+                var petDTO = _mapper.Map<PetDTO>(pet);
+                return Ok(petDTO);
 
             }catch(Exception ex)
             {
@@ -75,14 +82,17 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Pet pet)
+        public async Task<IActionResult> Post(PetDTO petDTO)
         {
             try
             {
+                var pet = _mapper.Map<Pet>(petDTO);
                 pet.FechaAlta = DateTime.Now;
                 _context.Add(pet);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("Get", new { id = pet.Id }, pet);
+
+                var petDTO2 = _mapper.Map<PetDTO>(pet);
+                return CreatedAtAction("Get", new { id = pet.Id }, petDTO2);
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);  
@@ -90,11 +100,13 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Pet pet)
+        public async Task<IActionResult> Put(int id, PetDTO petDTO)
         {
             try
             {
-                if(id != pet.Id)
+                var pet = _mapper.Map<Pet>(petDTO);
+
+                if (id != pet.Id)
                 {
                     return BadRequest();
                 }
@@ -113,7 +125,10 @@ namespace WebApplication1.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return Ok();
+                var petDTO2 = _mapper.Map<PetDTO>(pet);
+
+                return NoContent();
+
             }catch(Exception ex)
             {
                 return BadRequest(ex.Message);

@@ -36,6 +36,9 @@ namespace WebApplication1
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Connection"));
             });
 
+            // Automapper
+            builder.Services.AddAutoMapper(typeof(Program));
+
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
